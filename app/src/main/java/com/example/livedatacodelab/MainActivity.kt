@@ -1,14 +1,12 @@
 package com.example.livedatacodelab
 
 import android.arch.lifecycle.GenericLifecycleObserver
-import android.arch.lifecycle.Observer
 import android.arch.lifecycle.ViewModelProviders
+import android.databinding.DataBindingUtil
 import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
 import android.util.Log
-import kotlinx.android.synthetic.main.activity_main.*
-import java.text.SimpleDateFormat
-import java.util.*
+import com.example.livedatacodelab.databinding.ActivityMainBinding
 
 class MainActivity : AppCompatActivity() {
 
@@ -20,17 +18,15 @@ class MainActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_main)
+
+        val binding = DataBindingUtil.setContentView<ActivityMainBinding>(this, R.layout.activity_main)
+        binding.setLifecycleOwner(this)
+        binding.viewModel = clockViewModel
 
         val lifecycleObserver = GenericLifecycleObserver { _, event ->
             Log.d("CodeLab", "onStateChanged state:$event")
         }
 
         lifecycle.addObserver(lifecycleObserver)
-
-        clockViewModel.getDate().observe(this, Observer<Date> {
-            Log.d("CodeLab", "onChanged")
-            textTime.text = SimpleDateFormat("HH:mm", Locale.US).format(it)
-        })
     }
 }
